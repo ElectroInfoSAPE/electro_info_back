@@ -63,6 +63,14 @@ npm run build
 npm run migrate
 ```
 
+4. (Opcional) Poblar la base de datos con datos de prueba:
+```bash
+npm run seed
+```
+Este comando creará:
+- 5 usuarios de prueba (estudiantes, profesor y bibliotecario)
+- 8 libros de prueba con diferentes estados y ubicaciones
+
 ## Estructura del Proyecto
 
 ```
@@ -137,3 +145,44 @@ npm run migrate
 3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
+
+## Datos de Prueba
+
+El sistema incluye un seeder para poblar la base de datos con datos de prueba. Para ejecutarlo:
+
+```bash
+npm run seed
+```
+
+### Usuarios de Prueba
+
+| Nombre           | Email                    | Tipo         |
+|-----------------|--------------------------|--------------|
+| Juan Pérez      | juan.perez@email.com    | estudiante   |
+| María García    | maria.garcia@email.com   | profesor     |
+| Carlos López    | carlos.lopez@email.com   | estudiante   |
+| Ana Martínez    | ana.martinez@email.com   | bibliotecario|
+| Roberto Sánchez | roberto.sanchez@email.com| estudiante   |
+
+### Libros de Prueba
+
+| Código | Título                        | Autor           | Estado      | Ubicación  |
+|--------|------------------------------|-----------------|-------------|------------|
+| LIB001 | Introducción a la Programación| John Smith      | disponible  | Estante A1 |
+| LIB002 | Bases de Datos Avanzadas     | María Rodriguez | disponible  | Estante B2 |
+| LIB003 | Redes de Computadoras        | David Johnson   | prestado    | Estante C3 |
+| LIB004 | Inteligencia Artificial      | Sarah Wilson    | disponible  | Estante A2 |
+| LIB005 | Desarrollo Web Full Stack    | Michael Brown   | disponible  | Estante B1 |
+| LIB006 | Sistemas Operativos          | Laura Martinez  | prestado    | Estante C1 |
+| LIB007 | Seguridad Informática        | Alex Turner    | disponible  | Estante A3 |
+| LIB008 | Machine Learning             | Emma Davis     | disponible  | Estante B3 |
+
+### Notas sobre los Datos de Prueba
+
+- Los usuarios tienen diferentes roles para probar distintos niveles de acceso
+- Los libros están distribuidos en diferentes ubicaciones (Estantes A, B y C)
+- Algunos libros están marcados como 'prestado' para probar la funcionalidad de préstamos
+- Todos los datos son ficticios y solo para propósitos de prueba
+- El seeder limpiará la base de datos antes de insertar los datos de prueba
+
+⚠️ **Advertencia**: El comando `npm run seed` eliminará todos los datos existentes antes de insertar los datos de prueba. No ejecutar en un entorno de producción.
