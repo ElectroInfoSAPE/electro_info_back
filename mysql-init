@@ -1,0 +1,2 @@
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'nueva_contraseña';
+FLUSH PRIVILEGES; 

@@ -9,30 +9,23 @@ yarn-error.log
 .env.local
 .env.*.local
 
-# Build output
-dist/
-build/
-
-# TypeScript
-*.tsbuildinfo
-
-# IDE and editor files
+# IDE
 .idea/
 .vscode/
 *.swp
 *.swo
-*~
 
-# Operating System
+# OS
 .DS_Store
 Thumbs.db
 
 # Logs
 logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+
+# Build
+dist/
+build/
 
 # Testing
 coverage/
@@ -40,6 +33,9 @@ coverage/
 # Temporary files
 tmp/
 temp/
+
+# TypeScript
+*.tsbuildinfo
 
 # Debug
 .debug/
