@@ -40,6 +40,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 unique: false
             },
+            author: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: false
+            },
             campus_id: {
                 type: DataTypes.BIGINT,
                 allowNull: false,

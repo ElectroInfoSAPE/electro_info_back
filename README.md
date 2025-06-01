@@ -1,144 +1,159 @@
-# Backend Sistema de Biblioteca
+# Electro Info Backend
 
-Este es el backend para el sistema de gestión de biblioteca, construido con Node.js, Express y Sequelize.
+Backend para sistema de biblioteca electrónica desarrollado con Node.js, Express y Sequelize.
 
-## Requisitos Previos
+## 🚀 Inicio Rápido
 
-- Node.js (v14 o superior)
-- MySQL (v5.7 o superior)
-- npm (viene con Node.js)
+### Opción 1: Script Automático (Recomendado)
 
-## Pasos de Instalación y Ejecución
-
-1. **Clonar el repositorio**
 ```bash
-git clone <url-del-repositorio>
-cd backend_electro_info
+# Hacer el script ejecutable
+chmod +x start.sh
+
+# Ejecutar setup completo
+./start.sh
 ```
 
-2. **Instalar dependencias**
+Este script automáticamente:
+- ✅ Crea el archivo `.env` si no existe
+- ✅ Verifica que MySQL esté instalado y corriendo
+- ✅ Instala las dependencias de Node.js
+- ✅ Crea la base de datos automáticamente
+- ✅ Genera todas las tablas basadas en los modelos
+- ✅ Puebla la base de datos con datos de ejemplo
+- ✅ Inicia el servidor
+
+### Opción 2: Pasos Manuales
+
+1. **Instalar dependencias:**
 ```bash
 npm install
 ```
 
-3. **Configurar variables de entorno**
-
-Crear un archivo `.env` en la raíz del proyecto con el siguiente contenido:
+2. **Configurar variables de entorno:**
+Crea un archivo `.env` en la raíz del proyecto:
 ```env
-NODE_ENV=development
+# Configuración de la base de datos
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=electro_info_db
+DB_USER=root
+DB_PASS=tu_password
+
+# Puerto del servidor
 PORT=3000
 
-# Database Configuration
-DB_HOST=localhost
-DB_USER=tu_usuario
-DB_PASS=tu_contraseña
-DB_NAME=library_db
-DB_PORT=3306
+# Entorno
+NODE_ENV=development
 ```
 
-> ⚠️ **Importante**: Reemplaza `tu_usuario` y `tu_contraseña` con tus credenciales de MySQL.
-
-4. **Crear la base de datos**
-
-Desde la línea de comandos de MySQL:
+3. **Configurar base de datos:**
 ```bash
-mysql -u tu_usuario -p
-```
+# Solo crear tablas
+npm run setup
 
-Una vez dentro de MySQL:
-```sql
-CREATE DATABASE library_db;
-```
-
-5. **Configurar la base de datos**
-
-Ejecuta las migraciones para crear las tablas:
-```bash
-# Ejecutar todas las migraciones pendientes
-npm run migrate
-
-# Si necesitas poblar la base de datos con datos iniciales
+# Solo poblar con datos de ejemplo
 npm run seed
+
+# Setup completo + inicio del servidor
+npm run dev:full
 ```
 
-6. **Iniciar el Servidor**
+## 📋 Scripts Disponibles
 
-Para desarrollo (con hot reload):
+- `npm start` - Inicia el servidor en producción
+- `npm run dev` - Inicia el servidor en modo desarrollo
+- `npm run setup` - Crea la base de datos y todas las tablas
+- `npm run seed` - Puebla la base de datos con datos de ejemplo
+- `npm run dev:full` - Setup completo + inicia el servidor
+
+## 🗄️ Base de Datos
+
+### Requisitos
+- MySQL 5.7+ o MySQL 8.0+
+- Usuario con permisos para crear bases de datos
+
+### Estructura de Tablas
+
+El sistema automáticamente creará las siguientes tablas:
+
+- **roles** - Roles de usuarios (Estudiante, Profesor, Administrativo)
+- **careers** - Carreras universitarias
+- **campuses** - Campus universitarios
+- **borrowers** - Usuarios que pueden solicitar préstamos
+- **books** - Libros disponibles en la biblioteca
+- **loans** - Préstamos activos
+- **invoices** - Historial de devoluciones
+
+### Datos de Ejemplo
+
+Al ejecutar el seeding, se crearán:
+- 3 roles por defecto
+- 5 carreras de ejemplo
+- 3 campus
+- 6 libros de ejemplo
+- 4 usuarios de ejemplo
+
+## 🔧 Desarrollo
+
+### Estructura del Proyecto
+```
+├── app.js              # Servidor principal
+├── config/             # Configuración de base de datos
+├── models/             # Modelos de Sequelize
+├── services/           # Lógica de negocio
+├── scripts/            # Scripts de automatización
+├── migrations/         # Migraciones (opcionales)
+└── start.sh           # Script de inicio automático
+```
+
+### Sincronización Automática vs Migraciones
+
+Este proyecto usa **sincronización automática** con `sequelize.sync()` que:
+- ✅ Crea automáticamente todas las tablas basadas en los modelos
+- ✅ Detecta cambios en los modelos y actualiza las tablas
+- ✅ Es más simple y rápido para desarrollo
+
+Si prefieres usar migraciones tradicionales:
 ```bash
-npm run dev
+npm run migrate
 ```
 
-Para producción:
+## 🌐 API Endpoints
+
+El servidor estará disponible en `http://localhost:3000` una vez iniciado.
+
+## ⚠️ Resolución de Problemas
+
+### MySQL no está corriendo
 ```bash
-npm start
+# Ubuntu/Debian
+sudo systemctl start mysql
+
+# macOS
+brew services start mysql
+
+# Windows
+net start mysql
 ```
 
-El servidor estará corriendo en `http://localhost:3000`
+### Error de conexión a la base de datos
+1. Verifica las credenciales en el archivo `.env`
+2. Asegúrate de que MySQL esté corriendo
+3. Verifica que el usuario tenga permisos para crear bases de datos
 
-## Verificar la Instalación
+### Reinstalar desde cero
+```bash
+# Eliminar node_modules y reinstalar
+rm -rf node_modules package-lock.json
+npm install
 
-Para verificar que todo está funcionando correctamente:
-
-1. Visita `http://localhost:3000/health`
-2. Deberías recibir una respuesta JSON indicando que la conexión a la base de datos es exitosa
-
-## Comandos de Base de Datos
-
-- `npm run migrate`: Ejecuta las migraciones pendientes
-- `npm run migrate:undo`: Revierte la última migración
-- `npm run seed`: Ejecuta los seeders para poblar la base de datos con datos iniciales
-
-## Comandos del Servidor
-
-- `npm start`: Inicia el servidor en modo producción
-- `npm run dev`: Inicia el servidor en modo desarrollo con hot reload
-
-## Estructura del Proyecto
-
-```
-backend_electro_info/
-├── config/
-│   └── database_config.js    # Configuración de la base de datos
-├── models/                   # Modelos Sequelize
-│   ├── index.js
-│   ├── book.model.js
-│   ├── borrower.model.js
-│   └── ...
-├── services/                 # Lógica de negocio
-│   ├── BaseService.js
-│   ├── BookService.js
-│   └── LoanService.js
-├── migrations/              # Migraciones de la base de datos
-├── seeders/                # Datos de prueba
-├── .env                    # Variables de entorno
-├── .sequelizerc           # Configuración de Sequelize CLI
-├── app.js                 # Punto de entrada de la aplicación
-└── package.json
+# Recrear base de datos (CUIDADO: elimina todos los datos)
+npm run setup
 ```
 
-## Solución de Problemas
+## 📝 Notas
 
-Si encuentras errores durante la instalación o ejecución, verifica:
-
-1. **Error de conexión a la base de datos**:
-   - Asegúrate de que MySQL esté corriendo
-   - Verifica que las credenciales en `.env` sean correctas
-   - Confirma que la base de datos existe
-
-2. **Error al ejecutar migraciones**:
-   - Verifica que tienes permisos de escritura en la base de datos
-   - Asegúrate de que la base de datos está creada
-   - Comprueba que no hay errores en los archivos de migración
-
-3. **El servidor no inicia**:
-   - Verifica que todas las migraciones se ejecutaron correctamente
-   - Comprueba que el puerto 3000 no esté en uso
-   - Revisa los logs de error en la consola
-
-## Notas Importantes
-
-- No subir el archivo `.env` al control de versiones
-- Siempre ejecutar las migraciones antes de iniciar el servidor
-- Mantener las dependencias actualizadas
-- Hacer backup de la base de datos regularmente
-- En producción, usar variables de entorno seguras 
+- El primer usuario creado tendrá permisos de administrador
+- Los datos de ejemplo se pueden modificar en `scripts/seed-database.js`
+- Para producción, cambiar `NODE_ENV=production` en `.env` 

@@ -6,9 +6,12 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "setup": "node scripts/setup-database.js",
+    "seed": "node scripts/seed-database.js",
+    "dev:full": "node scripts/start-server.js",
     "migrate": "sequelize-cli db:migrate",
     "migrate:undo": "sequelize-cli db:migrate:undo",
-    "seed": "sequelize-cli db:seed:all"
+    "seed:cli": "sequelize-cli db:seed:all"
   },
   "dependencies": {
     "cors": "^2.8.5",
