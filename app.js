@@ -141,6 +141,50 @@ app.post('/api/books', async (req, res) => {
   }
 });
 
+app.delete('/api/books/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Verificar que el libro existe
+    const book = await db.Book.findByPk(id);
+    if (!book) {
+      return res.status(404).json({
+        success: false,
+        message: 'Libro no encontrado'
+      });
+    }
+
+    // Verificar que el libro no esté prestado
+    const activeLoan = await db.Loan.findOne({
+      where: { book_id: id }
+    });
+
+    if (activeLoan) {
+      return res.status(400).json({
+        success: false,
+        message: 'No se puede eliminar el libro porque está prestado'
+      });
+    }
+
+    // Eliminar el libro
+    await db.Book.destroy({
+      where: { id }
+    });
+
+    res.json({
+      success: true,
+      message: 'Libro eliminado exitosamente',
+      data: book
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al eliminar libro',
+      error: error.message
+    });
+  }
+});
+
 // ===== RUTAS DE USUARIOS/BORROWERS =====
 app.get('/api/borrowers', async (req, res) => {
   try {
@@ -510,6 +554,7 @@ app.use('*', (req, res) => {
       'GET /api/books',
       'POST /api/books',
       'GET /api/books/:id',
+      'DELETE /api/books/:id',
       'GET /api/borrowers',
       'POST /api/borrowers',
       'GET /api/loans',
