@@ -8,8 +8,49 @@ const db = require('./models'); // Tu configuración de base de datos
 
 const app = express();
 
+// Configuración específica de CORS
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Lista de orígenes permitidos
+    const allowedOrigins = [
+      'http://localhost:3000',     // Tu backend
+      'http://localhost:3001',     // React por defecto
+      'http://localhost:5173',     // Vite por defecto
+      'http://localhost:8080',     // Vue CLI por defecto
+      'http://localhost:4200',     // Angular por defecto
+      'http://127.0.0.1:3001',    // Alternativa localhost
+      'http://127.0.0.1:5173',    // Alternativa localhost
+      'http://127.0.0.1:8080',    // Alternativa localhost
+      'http://127.0.0.1:4200',    // Alternativa localhost
+      'http://172.31.92.36',      // IP específica
+      'http://172.31.92.36:3000', // IP con puerto 3000
+      'http://172.31.92.36:3001', // IP con puerto 3001
+      'http://172.31.92.36:5173', // IP con puerto 5173
+      'http://172.31.92.36:8080', // IP con puerto 8080
+      'http://172.31.92.36:5173', // IP con puerto 4200
+      // Agrega aquí el puerto específico que necesites
+      // 'http://localhost:PUERTO_ESPECIFICO'
+    ];
+
+    // Permitir requests sin origin (como Postman, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Verificar si el origin está en la lista de permitidos
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS bloqueado para:', origin);
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true, // Permite cookies y headers de autenticación
+  optionsSuccessStatus: 200 // Para compatibilidad con navegadores antiguos
+};
+
 // Middleware global
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
