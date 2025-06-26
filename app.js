@@ -145,28 +145,42 @@ app.get('/api/books/:id', async (req, res) => {
 
 app.post('/api/books', async (req, res) => {
   try {
-    const { name, author, campus_id } = req.body;
+    const { id, name, author, campus } = req.body;
 
-    if (!name || !author || !campus_id) {
+    if (!id || !name || !author || !campus) {
       return res.status(400).json({
         success: false,
-        message: 'Nombre, autor y campus_id son requeridos'
+        message: 'ID, nombre, autor y campus son requeridos'
       });
     }
 
-    // Verificar que existe el campus
-    const campus = await db.Campus.findByPk(campus_id);
-    if (!campus) {
+    // Verificar que el ID no esté duplicado
+    const existingBook = await db.Book.findByPk(id);
+    if (existingBook) {
       return res.status(400).json({
         success: false,
-        message: 'Campus no válido'
+        message: 'Ya existe un libro con ese ID'
+      });
+    }
+
+    // Buscar el campus por nombre
+    const campusRecord = await db.Campus.findOne({
+      where: { name: campus }
+    });
+    
+    if (!campusRecord) {
+      return res.status(400).json({
+        success: false,
+        message: 'Campus no encontrado. Campus disponibles: ' + 
+          (await db.Campus.findAll()).map(c => c.name).join(', ')
       });
     }
 
     const newBook = await db.Book.create({
+      id,
       name,
       author,
-      campus_id
+      campus_id: campusRecord.id
     });
 
     res.status(201).json({

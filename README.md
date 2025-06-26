@@ -123,6 +123,45 @@ npm run migrate
 
 El servidor estará disponible en `http://localhost:3000` una vez iniciado.
 
+### Crear Libro (POST /api/books)
+
+**Parámetros requeridos:**
+- `id` - ID único del libro (código de barras)
+- `name` - Nombre del libro
+- `author` - Autor del libro
+- `campus` - Nombre del campus donde se encuentra
+
+**Ejemplo de petición:**
+```json
+{
+  "id": "9780132350884",
+  "name": "Fundamentos de Programación",
+  "author": "John Deitel",
+  "campus": "Campus Central"
+}
+```
+
+**Respuesta exitosa:**
+```json
+{
+  "success": true,
+  "message": "Libro creado exitosamente",
+  "data": {
+    "id": "9780132350884",
+    "name": "Fundamentos de Programación",
+    "author": "John Deitel",
+    "campus_id": "1"
+  }
+}
+```
+
+**Campus disponibles:**
+- Campus Central
+- Campus Norte
+- Campus Sur
+- Campus Este
+- Campus Oeste
+
 ## ⚠️ Resolución de Problemas
 
 ### MySQL no está corriendo
