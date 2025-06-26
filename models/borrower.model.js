@@ -36,9 +36,9 @@ module.exports = (sequelize, DataTypes) => {
     (
         {
             id: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.CHAR(8),
                 primaryKey: true,
-                autoIncrement: true
+                allowNull: false
             },
             name: {
                 type: DataTypes.STRING,
