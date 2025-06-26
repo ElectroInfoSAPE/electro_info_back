@@ -18,6 +18,7 @@ const corsOptions = {
       'http://localhost:5173',     // Vite por defecto
       'http://localhost:8080',     // Vue CLI por defecto
       'http://localhost:4200',     // Angular por defecto
+      'http://localhost', 
       'http://127.0.0.1:3001',    // Alternativa localhost
       'http://127.0.0.1:5173',    // Alternativa localhost
       'http://127.0.0.1:8080',    // Alternativa localhost

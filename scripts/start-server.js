@@ -22,7 +22,7 @@ async function startServer() {
     // ✅ CORREGIDO: Importar y iniciar el servidor correctamente
     const app = require('../app'); // Ahora apunta al verdadero app.js de Express
     
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT;
     
     app.listen(PORT, () => {
       console.log(`🌟 Servidor corriendo en http://localhost:${PORT}`);

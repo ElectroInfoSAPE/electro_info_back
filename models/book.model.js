@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     (
         {
             id: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.STRING,
                 primaryKey: true,
                 autoIncrement: true
             },
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
                 unique: false
             },
             campus_id: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.STRING,
                 allowNull: false,
                 references: {
                     model: 'campuses',
