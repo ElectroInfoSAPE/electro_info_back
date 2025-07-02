@@ -37,8 +37,8 @@ module.exports = (sequelize, DataTypes) => {
         {
             id: {
                 type: DataTypes.CHAR(8),
+                allowNull: false,
                 primaryKey: true,
-                allowNull: false
             },
             name: {
                 type: DataTypes.STRING,

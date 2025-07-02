@@ -33,20 +33,19 @@ module.exports = (sequelize, DataTypes) => {
             id: {
                 type: DataTypes.STRING,
                 primaryKey: true,
-                allowNull: false
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false,
-                unique: false
             },
             author: {
                 type: DataTypes.STRING,
                 allowNull: false,
                 unique: false
             },
+            name: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: false
+            },
             campus_id: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.STRING,
                 allowNull: false,
                 references: {
                     model: 'campuses',

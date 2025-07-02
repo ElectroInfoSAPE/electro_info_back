@@ -456,39 +456,33 @@ app.post('/api/loans', async (req, res) => {
   }
 });
 
-app.delete('/api/loans/:prestamoId', async (req, res) => {
+// Nuevo endpoint para devolver préstamo por book_id
+app.post('/api/loans/devolver', async (req, res) => {
   try {
-    const { prestamoId } = req.params;
-
-    // Validar que prestamoId es un número válido
-    if (!prestamoId || isNaN(prestamoId)) {
+    const { book_id } = req.body;
+    if (!book_id) {
       return res.status(400).json({
         success: false,
-        message: 'prestamoId debe ser un número válido'
+        message: 'book_id es requerido'
       });
     }
 
-    // Buscar el préstamo con toda la información antes de eliminarlo
-    const loan = await db.Loan.findByPk(prestamoId, {
+    // Buscar el préstamo activo por book_id
+    const loan = await db.Loan.findOne({
+      where: { book_id },
       include: [
         {
           model: db.Borrower,
           attributes: ['name'],
           include: [
-            {
-              model: db.Role,
-              attributes: ['name']
-            }
+            { model: db.Role, attributes: ['name'] }
           ]
         },
         {
           model: db.Book,
           attributes: ['name'],
           include: [
-            {
-              model: db.Campus,
-              attributes: ['name']
-            }
+            { model: db.Campus, attributes: ['name'] }
           ]
         }
       ]
@@ -497,18 +491,25 @@ app.delete('/api/loans/:prestamoId', async (req, res) => {
     if (!loan) {
       return res.status(404).json({
         success: false,
-        message: 'Préstamo no encontrado'
+        message: 'Préstamo no encontrado para ese book_id'
       });
     }
 
-    // Eliminar el préstamo usando su ID real
-    await db.Loan.destroy({
-      where: { id: prestamoId }
-    });
+    // Eliminar el préstamo
+    await db.Loan.destroy({ where: { id: loan.id } });
 
     // Calcular si fue devuelto a tiempo
     const fechaDevolucion = new Date();
     const fueDevueltoATiempo = fechaDevolucion <= new Date(loan.devolution_expected_date);
+
+    // Crear la invoice asociada a la devolución
+    await db.Invoice.create({
+      borrower_id: loan.borrower_id,
+      book_id: loan.book_id,
+      retrieval_date: loan.retrieval_date,
+      devolution_expected_date: loan.devolution_expected_date,
+      devolution_date: fechaDevolucion
+    });
 
     res.json({
       success: true,
@@ -627,6 +628,49 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
+// Endpoint para obtener todos los requests
+app.get('/api/requests', async (req, res) => {
+  try {
+    const requests = await db.Request.findAll({
+      include: [{
+        model: db.Borrower,
+        attributes: ['id', 'name']
+      }]
+    });
+    const data = requests.map(r => ({
+      id: r.id,
+      borrower_id: r.Borrower?.id,
+      borrower_name: r.Borrower?.name
+    }));
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al obtener requests', error: error.message });
+  }
+});
+
+// Endpoint para crear un request y programar su borrado automático
+app.post('/api/requests', async (req, res) => {
+  try {
+    const { borrower_id } = req.body;
+    if (!borrower_id) {
+      return res.status(400).json({ success: false, message: 'borrower_id es requerido' });
+    }
+    const newRequest = await db.Request.create({ borrower_id });
+    // Programar borrado automáticamente en 30 segundos
+    setTimeout(async () => {
+      try {
+        await db.Request.destroy({ where: { id: newRequest.id } });
+        console.log(`Request con id ${newRequest.id} eliminado automáticamente después de 30 segundos.`);
+      } catch (err) {
+        console.error('Error al borrar request automáticamente:', err.message);
+      }
+    }, 30000);
+    res.status(201).json({ success: true, data: newRequest });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al crear request', error: error.message });
+  }
+});
+
 // ===== MIDDLEWARE DE ERROR =====
 
 // Ruta no encontrada
@@ -644,12 +688,14 @@ app.use('*', (req, res) => {
       'POST /api/borrowers',
       'GET /api/loans',
       'POST /api/loans',
-      'DELETE /api/loans/:prestamoId',
+      'POST /api/loans/devolver',
       'GET /api/campuses',
       'GET /api/roles',
       'GET /api/careers',
       'GET /api/invoices',
-      'GET /api/stats'
+      'GET /api/stats',
+      'GET /api/requests',
+      'POST /api/requests'
     ]
   });
 });
