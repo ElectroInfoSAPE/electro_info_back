@@ -572,6 +572,35 @@ app.get('/api/careers', async (req, res) => {
   }
 });
 
+// ===== RUTAS DE FACTURAS (INVOICES) =====
+app.get('/api/invoices', async (req, res) => {
+  try {
+    const invoices = await db.Invoice.findAll({
+      include: [
+        {
+          model: db.Borrower,
+          attributes: ['name']
+        },
+        {
+          model: db.Book,
+          attributes: ['name']
+        }
+      ]
+    });
+    res.json({
+      success: true,
+      count: invoices.length,
+      data: invoices
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener facturas',
+      error: error.message
+    });
+  }
+});
+
 // ===== RUTA DE ESTADÍSTICAS =====
 app.get('/api/stats', async (req, res) => {
   try {
@@ -619,6 +648,7 @@ app.use('*', (req, res) => {
       'GET /api/campuses',
       'GET /api/roles',
       'GET /api/careers',
+      'GET /api/invoices',
       'GET /api/stats'
     ]
   });
